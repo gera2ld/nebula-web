@@ -1,10 +1,19 @@
 <script lang="ts">
+	import YAML from 'yaml';
 	import { page } from '$app/stores';
 	import Host from '@/components/host.svelte';
 	import Header from '@/components/header.svelte';
 	import { nebulaData, signCert } from '@/common';
+	import { getHostConfig, getLighthouseConfig } from '@/common/config';
 
 	const networkId = +$page.params.id;
+	let result: {
+		config: string;
+		ca: string;
+		crt: string;
+		key: string;
+	} | null = null;
+
 	$: network = $nebulaData.networks[networkId];
 
 	let editing = -2;
@@ -17,9 +26,34 @@
 		editing = id;
 	}
 
+	function getConfig(host: INebulaHost) {
+		if (host.type === 'lighthouse') {
+			return getLighthouseConfig();
+		}
+		const lighthouses = network.hosts.filter(host => host.type === 'lighthouse');
+		const lighthouseHosts = lighthouses.map(host => host.ip);
+		const staticHostMap = lighthouses.reduce((prev, host) => {
+			if (host.publicIp) {
+				prev[host.ip] = [host.publicIp];
+			}
+			return prev;
+			}, {} as Record<string, string[]>);
+		const relays = Object.values(staticHostMap).flat();
+		return getHostConfig({
+			staticHostMap,
+			lighthouseHosts,
+			relays,
+		});
+	}
+
 	async function handleConfirm(id: number, host: INebulaHost) {
 		const { crt, key } = await signCert(host.name, host.ip);
-		console.log(key, crt);
+		result = {
+			config: YAML.stringify(getConfig(host)),
+			ca: $nebulaData.ca!.crt,
+			crt,
+			key,
+		};
 		nebulaData.update((data) => {
 			const hosts = [...network.hosts];
 			if (id < 0) {

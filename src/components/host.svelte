@@ -7,7 +7,8 @@
 		type: 'host',
 		name: '',
 		ip: '10.10.10.2/24',
-		relay: false
+		relay: false,
+		publicIp: ''
 	};
 	export let editing: boolean = false;
 	export let onConfirm: ((id: number, network: INebulaHost) => void) | null = null;
@@ -21,6 +22,7 @@
 		'name',
 		'ip',
 		'relay',
+		'publicIp',
 	];
 
 	$: if (editing) startEditing();
