@@ -1,0 +1,29 @@
+body {
+	font-family: 'Roboto Slab', serif;
+	@apply bg-white text-gray-800 dark:(bg-gray-800 text-gray-300);
+}
+
+nav > :not(:first-child)::before {
+	content: '>';
+	@apply mx-4;
+}
+
+a {
+	@apply text-blue-400 hover:text-blue-600 underline;
+}
+
+button {
+	@apply bg-transparent text-blue-400 hover:text-blue-600 underline;
+}
+
+input, textarea {
+	@apply block w-full bg-transparent outline-none px-2 t-border;
+}
+
+input {
+	@apply border-b;
+}
+
+textarea {
+	@apply border;
+}
