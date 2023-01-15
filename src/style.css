@@ -22,7 +22,7 @@ nav > :not(:first-child)::before {
 }
 
 a {
-	@apply text-blue-400 hover:text-blue-600 underline;
+	@apply text-blue-400 hover:text-blue-600 underline cursor-pointer;
 }
 
 button {

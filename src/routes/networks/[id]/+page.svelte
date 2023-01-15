@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import Host from '@/components/host.svelte';
 	import Header from '@/components/header.svelte';
+	import Result from '@/components/result.svelte';
 	import { nebulaData, signCert } from '@/common';
 	import { getHostConfig, getLighthouseConfig } from '@/common/config';
 
@@ -30,19 +31,19 @@
 		if (host.type === 'lighthouse') {
 			return getLighthouseConfig();
 		}
-		const lighthouses = network.hosts.filter(host => host.type === 'lighthouse');
-		const lighthouseHosts = lighthouses.map(host => host.ip);
+		const lighthouses = network.hosts.filter((host) => host.type === 'lighthouse');
+		const lighthouseHosts = lighthouses.map((host) => host.ip);
 		const staticHostMap = lighthouses.reduce((prev, host) => {
 			if (host.publicIp) {
 				prev[host.ip] = [host.publicIp];
 			}
 			return prev;
-			}, {} as Record<string, string[]>);
+		}, {} as Record<string, string[]>);
 		const relays = Object.values(staticHostMap).flat();
 		return getHostConfig({
 			staticHostMap,
 			lighthouseHosts,
-			relays,
+			relays
 		});
 	}
 
@@ -52,7 +53,7 @@
 			config: YAML.stringify(getConfig(host)),
 			ca: $nebulaData.ca!.crt,
 			crt,
-			key,
+			key
 		};
 		nebulaData.update((data) => {
 			const hosts = [...network.hosts];
@@ -109,4 +110,13 @@
 			/>
 		{/each}
 	</div>
+{/if}
+
+{#if result}
+	<Result
+		data={result}
+		onClose={() => {
+			result = null;
+		}}
+	/>
 {/if}
