@@ -1,6 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+	.t-border {
+		@apply border-gray-400 dark:border-gray-600 hover:border-gray-600 dark:hover:border-gray-400;
+	}
+	.t-card {
+		@apply rounded border t-border px-4 py-2;
+	}
+}
+
 body {
 	font-family: 'Roboto Slab', serif;
-	@apply bg-white text-gray-800 dark:(bg-gray-800 text-gray-300);
+	@apply bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300;
 }
 
 nav > :not(:first-child)::before {

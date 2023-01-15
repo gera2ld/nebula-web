@@ -60,7 +60,7 @@
 			<div class="mt-2 text-red-500 dark:text-red-700">{error}</div>
 		{/if}
 		<div class="mt-2">
-			<button on:click={handleConfirm}>Confirm</button>
+			<button on:click={handleConfirm}>Confirm and Sign</button>
 			<button on:click={onCancel}>Cancel</button>
 		</div>
 	{:else}
