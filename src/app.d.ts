@@ -9,24 +9,24 @@ declare namespace App {
 }
 
 interface INebulaHost {
-  type: "lighthouse" | "host";
-  name: string;
-  ip: string;
-  relay: boolean;
-  publicIp: string;
+	type: 'lighthouse' | 'host';
+	name: string;
+	ip: string;
+	relay: boolean;
+	publicIp: string;
 }
 
 interface INebulaNetwork {
-  name: string;
-  ip: string;
-  staticHostMap: Record<string, string[]>;
-  hosts: INebulaHost[];
+	name: string;
+	ip: string;
+	staticHostMap: Record<string, string[]>;
+	hosts: INebulaHost[];
 }
 
 interface INebulaData {
-  ca?: {
-    name: string;
-    crt: string;
-  };
-  networks: INebulaNetwork[];
+	ca?: {
+		name: string;
+		crt: string;
+	};
+	networks: INebulaNetwork[];
 }

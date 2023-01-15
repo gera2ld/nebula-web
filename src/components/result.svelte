@@ -39,7 +39,7 @@
 			canvas,
 			cellSize: 4,
 			padding: 4,
-			data: content,
+			data: content
 		});
 	}
 
@@ -99,7 +99,9 @@
 			</div>
 			<div class="flex-1 min-w-0 px-2 flex flex-col">
 				{#if active < 0}
-					<span class="text-gray-400 dark:text-gray-500">Select a file on the left and view its content.</span>
+					<span class="text-gray-400 dark:text-gray-500"
+						>Select a file on the left and view its content.</span
+					>
 				{:else}
 					<div class="text-right">
 						<svelte:element

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { loadData, setUpCA } from "@/common";
-
+	import { loadData, setUpCA } from '@/common';
 
 	export let value = '';
 

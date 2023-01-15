@@ -17,13 +17,7 @@
 
 	let config: string;
 	let error = '';
-	$: fields = [
-		'type',
-		'name',
-		'ip',
-		'relay',
-		'publicIp',
-	];
+	$: fields = ['type', 'name', 'ip', 'relay', 'publicIp'];
 
 	$: if (editing) startEditing();
 

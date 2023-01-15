@@ -16,11 +16,7 @@
 
 	let config: string;
 	let error = '';
-	$: fields = [
-		'name',
-		...id < 0 ? ['ip'] : [],
-		'staticHostMap',
-	];
+	$: fields = ['name', ...(id < 0 ? ['ip'] : []), 'staticHostMap'];
 
 	$: if (editing) startEditing();
 

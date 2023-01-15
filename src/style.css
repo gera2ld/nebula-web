@@ -32,7 +32,8 @@ button {
 	@apply bg-transparent text-blue-400 hover:text-blue-600 underline;
 }
 
-input, textarea {
+input,
+textarea {
 	@apply block w-full bg-transparent outline-none px-2 t-border;
 }
 
