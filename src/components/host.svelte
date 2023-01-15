@@ -1,35 +1,27 @@
 <script lang="ts">
-	import { pick } from 'lodash-es';
-	import YAML from 'yaml';
-
 	export let id: number;
-	export let host: INebulaHost = {
-		type: 'host',
-		name: '',
-		ip: '10.10.10.2/24',
-		relay: false,
-		publicIp: ''
-	};
+	export let host: INebulaHost;
 	export let editing: boolean = false;
-	export let onConfirm: ((id: number, network: INebulaHost) => void) | null = null;
+	export let onConfirm: ((id: number, network: INebulaHost & { pub: string }) => void) | null =
+		null;
 	export let onEdit = () => {};
 	export let onCancel = () => {};
 
-	let config: string;
+	let values: INebulaHost & { pub: string };
 	let error = '';
-	$: fields = ['type', 'name', 'ip', 'relay', 'publicIp'];
 
 	$: if (editing) startEditing();
 
 	function startEditing() {
-		config = YAML.stringify(pick(host, fields));
+		values = { ...host, pub: '' };
 	}
 
 	function validate(update: INebulaHost) {
 		error = '';
 		try {
 			if (!update.name) throw new Error('name is required');
-			if (!update.ip) throw new Error('ip is required');
+			if (!/^\d+\.\d+\.\d+\.\d+$/.test(update.ip)) throw new Error('Invalid IP');
+			if (update.publicIpPort && !/^\d+\.\d+\.\d+\.\d+:\d+$/.test(update.publicIpPort)) throw new Error('Invalid public IP');
 		} catch (err) {
 			error = `${err}`;
 		}
@@ -37,30 +29,52 @@
 	}
 
 	function handleConfirm() {
-		const data = YAML.parse(config);
-		const update: INebulaHost = {
-			...host,
-			...pick(data, fields)
-		};
-		if (validate(update)) onConfirm?.(id, update);
+		if (validate(values)) onConfirm?.(id, values);
 	}
 </script>
 
 <div class="mb-4 t-card">
 	{#if editing}
-		<span class="text-xs">Edit config as YAML:</span>
-		<textarea class="min-h-[8em] mt-2" bind:value={config} />
+		<label class="mb-2">
+			<span>Type:</span>
+			<select bind:value={values.type}>
+				<option value="host">Host</option>
+				<option value="lighthouse">Lighthouse</option>
+			</select>
+		</label>
+		<label class="mb-2">
+			<span>Name: (usually a host name)</span>
+			<input bind:value={values.name} />
+		</label>
+		<label class="mb-2">
+			<span>IP:</span>
+			<input bind:value={values.ip} />
+		</label>
+		<label class="mb-2">
+			<span>Public IP and port: (optional)</span>
+			<input bind:value={values.publicIpPort} />
+		</label>
+		<label class="mb-2">
+			<span>Relay:</span>
+			<input type="checkbox" bind:checked={values.relay} />
+		</label>
+		<label class="mb-2">
+			<span>Use an existing public key: (optional)</span>
+			<textarea class="min-h-[4em] mb-2" bind:value={values.pub} />
+		</label>
 		{#if error}
-			<div class="mt-2 text-red-500 dark:text-red-700">{error}</div>
+			<div class="mb-2 text-red-500 dark:text-red-700">{error}</div>
 		{/if}
-		<div class="mt-2">
+		<div class="text-right">
 			<button on:click={handleConfirm}>Confirm and Sign</button>
 			<button on:click={onCancel}>Cancel</button>
 		</div>
 	{:else}
-		<div>[{host.type}] IP: {host.ip}</div>
+		<div>[{host.type}] IP: {host.ip} {host.publicIpPort ? `(Public IP: ${host.publicIpPort})` : ''}</div>
 		<div>Name: {host.name}</div>
-		<button on:click={onEdit}>Edit</button>
-		<button>Delete</button>
+		<div class="text-right">
+			<button on:click={onEdit}>Edit</button>
+			<button>Delete</button>
+		</div>
 	{/if}
 </div>

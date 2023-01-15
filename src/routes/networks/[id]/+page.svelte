@@ -9,13 +9,22 @@
 
 	const networkId = +$page.params.id;
 	let result: {
+		name: string;
 		config: string;
 		ca: string;
 		crt: string;
-		key: string;
+		key?: string;
 	} | null = null;
+	let newHost: INebulaHost;
 
 	$: network = $nebulaData.networks[networkId];
+	$: newHost = {
+		type: 'host',
+		name: '',
+		ip: network.ipRange.split('/')[0],
+		relay: false,
+		publicIpPort: ''
+	};
 
 	let editing = -2;
 
@@ -34,8 +43,8 @@
 		const lighthouses = network.hosts.filter((host) => host.type === 'lighthouse');
 		const lighthouseHosts = lighthouses.map((host) => host.ip);
 		const staticHostMap = lighthouses.reduce((prev, host) => {
-			if (host.publicIp) {
-				prev[host.ip] = [host.publicIp];
+			if (host.publicIpPort) {
+				prev[host.ip] = [host.publicIpPort];
 			}
 			return prev;
 		}, {} as Record<string, string[]>);
@@ -47,9 +56,16 @@
 		});
 	}
 
-	async function handleConfirm(id: number, host: INebulaHost) {
-		const { crt, key } = await signCert(host.name, host.ip);
+	async function handleConfirm(id: number, data: INebulaHost & { pub: string }) {
+		const { pub, ...host } = data;
+		const ipRange = `${host.ip}/${network.ipRange.split('/').pop()}`;
+		const { crt, key } = await signCert({
+			name: host.name,
+			ipRange,
+			pub,
+		});
 		result = {
+			name: host.name,
 			config: YAML.stringify(getConfig(host)),
 			ca: $nebulaData.ca!.crt,
 			crt,
@@ -87,7 +103,7 @@
 				<div>
 					<div class="inline-block">
 						<div class="text-xs">Network:</div>
-						<div>{network.name} ({network.ip})</div>
+						<div>{network.name} ({network.ipRange})</div>
 					</div>
 				</div>
 				<div>Hosts</div>
@@ -97,7 +113,7 @@
 			</div>
 		</Header>
 		{#if editing === -1}
-			<Host id={-1} editing onConfirm={handleConfirm} onCancel={handleCancel} />
+			<Host host={newHost} id={-1} editing onConfirm={handleConfirm} onCancel={handleCancel} />
 		{/if}
 		{#each network.hosts as host, id}
 			<Host

@@ -4,6 +4,11 @@
 	import Header from '@/components/header.svelte';
 	import Setup from './setup.svelte';
 
+	const newNetwork: INebulaNetwork = {
+		name: '',
+		ipRange: '10.10.10.0/24',
+		hosts: []
+	};
 	let editing = -2;
 
 	function handleAdd() {
@@ -49,7 +54,7 @@
 			<Setup />
 		{:else}
 			{#if editing === -1}
-				<Network id={-1} editing onConfirm={handleConfirm} onCancel={handleCancel} />
+				<Network network={newNetwork} id={-1} editing onConfirm={handleConfirm} onCancel={handleCancel} />
 			{/if}
 			{#each $nebulaData.networks as network, id}
 				<Network

@@ -60,6 +60,6 @@ export function setUpCA(name: string) {
 	return api<{ crt: string }>({ command: 'createCA', args: [name] });
 }
 
-export function signCert(name: string, ip: string) {
-	return api<{ crt: string; key: string }>({ command: 'signCert', args: [{ name, ip }] });
+export function signCert(params: { name: string; ipRange: string; pub?: string }) {
+	return api<{ crt: string; key?: string }>({ command: 'signCert', args: [params] });
 }

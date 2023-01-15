@@ -1,34 +1,26 @@
 <script lang="ts">
-	import { pick } from 'lodash-es';
-	import YAML from 'yaml';
-
 	export let id: number;
-	export let network: INebulaNetwork = {
-		name: '',
-		ip: '10.10.10.0/24',
-		staticHostMap: {},
-		hosts: []
-	};
+	export let network: INebulaNetwork;
 	export let editing: boolean = false;
 	export let onConfirm: ((id: number, network: INebulaNetwork) => void) | null = null;
 	export let onEdit = () => {};
 	export let onCancel = () => {};
 
-	let config: string;
+	let values: INebulaNetwork;
 	let error = '';
-	$: fields = ['name', ...(id < 0 ? ['ip'] : []), 'staticHostMap'];
 
 	$: if (editing) startEditing();
+	$: staticHostsNumber = network.hosts.filter(host => host.publicIpPort).length;
 
 	function startEditing() {
-		config = YAML.stringify(pick(network, fields));
+		values = { ...network };
 	}
 
 	function validate(update: INebulaNetwork) {
 		error = '';
 		try {
 			if (!update.name) throw new Error('name is required');
-			if (!update.ip) throw new Error('ip is required');
+			if (!/^\d+\.\d+\.\d+\.\d+\/\d+$/.test(update.ipRange)) throw new Error('Invalid IP range');
 		} catch (err) {
 			error = `${err}`;
 		}
@@ -36,19 +28,20 @@
 	}
 
 	function handleConfirm() {
-		const data = YAML.parse(config);
-		const update: INebulaNetwork = {
-			...network,
-			...pick(data, fields)
-		};
-		if (validate(update)) onConfirm?.(id, update);
+		if (validate(values)) onConfirm?.(id, values);
 	}
 </script>
 
 <div class="mb-4 t-card">
 	{#if editing}
-		<span class="text-xs">Edit config as YAML:</span>
-		<textarea class="min-h-[8em] mt-2" bind:value={config} />
+		<label class="mb-2">
+			<span>Name:</span>
+			<input bind:value={values.name} />
+		</label>
+		<label class="mb-2">
+			<span>IP range:</span>
+			<input bind:value={values.ipRange} />
+		</label>
 		{#if error}
 			<div class="mt-2 text-red-500 dark:text-red-700">{error}</div>
 		{/if}
@@ -58,7 +51,7 @@
 		</div>
 	{:else}
 		<div>{network.name}</div>
-		<div>{network.ip}</div>
+		<div>{network.ipRange} ({staticHostsNumber} static hosts)</div>
 		<div class="flex">
 			<div class="flex-1">
 				<a href="/networks/{id}">{network.hosts.length} hosts</a>

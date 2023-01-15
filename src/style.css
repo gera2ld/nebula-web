@@ -24,6 +24,10 @@ nav > :not(:first-child)::before {
 	@apply mx-4;
 }
 
+strong {
+	@apply text-yellow-600;
+}
+
 a {
 	@apply text-blue-400 hover:text-blue-600 underline cursor-pointer;
 }
@@ -32,15 +36,44 @@ button {
 	@apply bg-transparent text-blue-400 hover:text-blue-600 underline;
 }
 
-input,
-textarea {
-	@apply block w-full bg-transparent outline-none px-2 t-border;
+select {
+	@apply bg-transparent t-border border-b;
 }
 
-input {
-	@apply border-b;
+input:not([type]) {
+	@apply block w-full bg-transparent outline-none px-2 t-border border-b;
+}
+
+input[type=checkbox] {
+	@apply inline-block relative w-4 h-4 cursor-pointer appearance-none;
+	&::before {
+		content: '';
+		@apply absolute w-full h-full t-border border;
+	}
+	&:checked::after {
+		content: '';
+		@apply absolute w-3 h-2 border-l-2 border-b-2 border-gray-500 -rotate-45 translate-x-[2px] translate-y-[2px];
+	}
 }
 
 textarea {
-	@apply border;
+	@apply block w-full bg-transparent outline-none px-2 t-border border;
+}
+
+
+label {
+	@apply block;
+	> * {
+		@apply align-middle;
+	}
+	> span {
+		@apply text-xs;
+	}
+	> input:not([type]), > textarea {
+		@apply mt-1;
+	}
+}
+
+code {
+	@apply px-2 py-1 rounded bg-yellow-200 dark:bg-cyan-900;
 }

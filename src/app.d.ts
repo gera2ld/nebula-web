@@ -13,13 +13,12 @@ interface INebulaHost {
 	name: string;
 	ip: string;
 	relay: boolean;
-	publicIp: string;
+	publicIpPort: string;
 }
 
 interface INebulaNetwork {
 	name: string;
-	ip: string;
-	staticHostMap: Record<string, string[]>;
+	ipRange: string;
 	hosts: INebulaHost[];
 }
 

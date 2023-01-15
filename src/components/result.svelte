@@ -3,10 +3,11 @@
 
 	export let onClose = () => {};
 	export let data: {
+		name: string;
 		config: string;
 		ca: string;
 		crt: string;
-		key: string;
+		key?: string;
 	};
 
 	const entries = [
@@ -22,10 +23,14 @@
 			name: 'host.crt',
 			content: data.crt
 		},
-		{
-			name: 'host.key',
-			content: data.key
-		}
+		...(data.key
+			? [
+					{
+						name: 'host.key',
+						content: data.key
+					}
+			  ]
+			: [])
 	];
 
 	let active = -1;
@@ -58,7 +63,7 @@
 			const url = URL.createObjectURL(tgz);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = 'nebula-config.tar.gz';
+			a.download = `nebula-${data.name}.tar.gz`;
 			a.click();
 			setTimeout(() => {
 				URL.revokeObjectURL(url);
@@ -71,13 +76,14 @@
 
 <div class="fixed inset-0 bg-gray-500/50" on:click={onClose}>
 	<div class="t-card max-w-[640px] mx-auto mt-24 t-bg" on:click|stopPropagation>
+		<p>Host <strong>{data.name}</strong> created and signed.</p>
 		<p>Please download or copy your keys. They won't be stored and displayed again.</p>
 		{#if downloading}
 			<span>Downloading...</span>
 		{:else}
 			<button on:click|preventDefault={handleDownload}>Download as a tarball</button>
 		{/if}
-		<div class="t-card flex items-stretch max-h-[80vh]">
+		<div class="t-card flex items-stretch max-h-[80vh] my-2">
 			<div class="pr-2 border-r border-gray-400">
 				<ul>
 					{#each entries as entry, idx}

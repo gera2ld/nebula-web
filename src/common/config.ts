@@ -24,6 +24,22 @@ const baseConfig = {
 	listen: {
 		host: '0.0.0.0',
 		port: 4242
+	},
+	firewall: {
+		outbound: [
+			{
+				port: 'any',
+				proto: 'any',
+				host: 'any'
+			}
+		],
+		inbound: [
+			{
+				port: 'any',
+				proto: 'icmp',
+				host: 'any'
+			}
+		]
 	}
 };
 
