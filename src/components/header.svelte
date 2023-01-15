@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { nebulaData } from '@/common';
+	import Modal from './modal.svelte';
+	import QrcodeContent from './qrcode-content.svelte';
+
+	let showCA = false;
+	let mode: 'content' | 'qrcode' = 'content';
 </script>
 
 <header class="sticky top-0 py-4 bg-inherit">
@@ -8,7 +13,16 @@
 		<slot name="breadcrumb" />
 	</nav>
 	{#if $nebulaData.ca}
-		<div>Org: {$nebulaData.ca.name}</div>
+		<div>
+			Org: {$nebulaData.ca.name}
+			<button class="ml-2" on:click={() => { showCA = true; }}>Show CA</button>
+		</div>
 	{/if}
 	<slot />
 </header>
+
+{#if showCA && $nebulaData.ca}
+<Modal onClose={() => { showCA = false; }}>
+		<QrcodeContent bind:mode content={$nebulaData.ca.crt} />
+</Modal>
+{/if}
