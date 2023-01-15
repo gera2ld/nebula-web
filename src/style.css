@@ -9,11 +9,14 @@
 	.t-card {
 		@apply rounded border t-border px-4 py-2;
 	}
+	.t-bg {
+		@apply bg-white dark:bg-gray-800;
+	}
 }
 
 body {
 	font-family: 'Roboto Slab', serif;
-	@apply bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300;
+	@apply t-bg text-gray-800 dark:text-gray-400;
 }
 
 nav > :not(:first-child)::before {

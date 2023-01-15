@@ -38,7 +38,8 @@
 		qrcanvas({
 			canvas,
 			cellSize: 4,
-			data: content
+			padding: 4,
+			data: content,
 		});
 	}
 
@@ -68,8 +69,8 @@
 	}
 </script>
 
-<div class="fixed inset-0 bg-gray-600/50" on:click={onClose}>
-	<div class="t-card max-w-[640px] mx-auto mt-24 bg-white" on:click|stopPropagation>
+<div class="fixed inset-0 bg-gray-500/50" on:click={onClose}>
+	<div class="t-card max-w-[640px] mx-auto mt-24 t-bg" on:click|stopPropagation>
 		<p>Please download or copy your keys. They won't be stored and displayed again.</p>
 		{#if downloading}
 			<span>Downloading...</span>
@@ -98,7 +99,7 @@
 			</div>
 			<div class="flex-1 min-w-0 px-2 flex flex-col">
 				{#if active < 0}
-					<span class="text-gray-400">Select a file on the left and view its content.</span>
+					<span class="text-gray-400 dark:text-gray-500">Select a file on the left and view its content.</span>
 				{:else}
 					<div class="text-right">
 						<svelte:element
@@ -123,7 +124,7 @@
 						<pre class="flex-1 overflow-auto">{content}</pre>
 					{:else}
 						<div class="flex-1">
-							<canvas class="w-72 h-72" bind:this={canvas} />
+							<canvas class="w-72 h-72 dark:brightness-50" bind:this={canvas} />
 						</div>
 					{/if}
 				{/if}
