@@ -4,16 +4,13 @@ import { nebulaData } from './store';
 
 export { nebulaData };
 
-export async function api<T = unknown>({ command, args }: { command: string; args?: any[] }) {
-	const resp = await fetch('/api', {
+export async function api<T = unknown>(command: string, arg?: any) {
+	const resp = await fetch(`/api/${command}`, {
 		method: 'POST',
 		headers: {
 			'content-type': 'application/json'
 		},
-		body: JSON.stringify({
-			command,
-			args
-		})
+		body: JSON.stringify(arg)
 	});
 	const { result, error } = await resp.json();
 	if (error) throw error;
@@ -35,7 +32,11 @@ function syncData() {
 }
 
 async function loadDataOnce() {
-	const data = await api<INebulaData>({ command: 'loadData' });
+	const data = await api<INebulaData>('loadData');
+	data.networks = (data.networks || []).map((network) => ({
+		...network,
+		hosts: network.hosts || []
+	}));
 	nebulaData.update(() => data);
 	syncData();
 }
@@ -46,20 +47,15 @@ export function loadData() {
 }
 
 function dumpDataOnce(data: INebulaData) {
-	return api<void>({
-		command: 'dumpData',
-		args: [
-			{
-				networks: data.networks
-			}
-		]
+	return api<void>('dumpData', {
+		networks: data.networks
 	});
 }
 
 export function setUpCA(name: string) {
-	return api<{ crt: string }>({ command: 'createCA', args: [name] });
+	return api<{ crt: string }>('createCA', name);
 }
 
 export function signCert(params: { name: string; ipRange: string; pub?: string }) {
-	return api<{ crt: string; key?: string }>({ command: 'signCert', args: [params] });
+	return api<{ crt: string; key?: string }>('signCert', params);
 }

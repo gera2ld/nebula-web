@@ -46,15 +46,23 @@
 			<svelte:fragment slot="breadcrumb">
 				<div>Networks</div>
 			</svelte:fragment>
-			<div class="mt-4">
-				<button on:click={handleAdd}>Add network</button>
-			</div>
+			{#if $nebulaData.ca?.crt}
+				<div class="mt-4">
+					<button on:click={handleAdd}>Add network</button>
+				</div>
+			{/if}
 		</Header>
-		{#if !$nebulaData.ca}
+		{#if !$nebulaData.ca?.crt}
 			<Setup />
 		{:else}
 			{#if editing === -1}
-				<Network network={newNetwork} id={-1} editing onConfirm={handleConfirm} onCancel={handleCancel} />
+				<Network
+					network={newNetwork}
+					id={-1}
+					editing
+					onConfirm={handleConfirm}
+					onCancel={handleCancel}
+				/>
 			{/if}
 			{#each $nebulaData.networks as network, id}
 				<Network

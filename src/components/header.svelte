@@ -12,7 +12,7 @@
 		<h1 class="text-3xl"><a href="/">Nebula Easy</a></h1>
 		<slot name="breadcrumb" />
 	</nav>
-	{#if $nebulaData.ca}
+	{#if $nebulaData.ca?.crt}
 		<div>
 			Org: {$nebulaData.ca.name}
 			<button class="ml-2" on:click={() => { showCA = true; }}>Show CA</button>
@@ -21,7 +21,7 @@
 	<slot />
 </header>
 
-{#if showCA && $nebulaData.ca}
+{#if showCA && $nebulaData.ca?.crt}
 <Modal onClose={() => { showCA = false; }}>
 		<QrcodeContent bind:mode content={$nebulaData.ca.crt} />
 </Modal>
